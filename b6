@@ -1,0 +1,135 @@
+package onlineshop;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Scanner;
+
+class Product {
+	private String id;
+	private String name;
+	private double price;
+
+	public Product(String id, String name, double price) {
+		this.id = id;
+		this.name = name;
+		this.price = price;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public double getFinalPrice() {
+		return price;
+	}
+}
+
+class Electronics extends Product {
+	private double warrantyFee;
+
+	public Electronics(String id, String name, double price, double warrantyFee) {
+		super(id, name, price);
+		this.warrantyFee = warrantyFee;
+	}
+
+	@Override
+	public double getFinalPrice() {
+		return super.getFinalPrice() * 1.10 + warrantyFee;
+	}
+}
+
+class Food extends Product {
+	private LocalDate expiryDate;
+
+	public Food(String id, String name, double price, LocalDate expiryDate) {
+		super(id, name, price);
+		this.expiryDate = expiryDate;
+	}
+
+	@Override
+	public double getFinalPrice() {
+		LocalDate today = LocalDate.now();
+
+		long daysLeft = ChronoUnit.DAYS.between(today, expiryDate);
+
+		if (daysLeft < 7) {
+			return super.getFinalPrice() * 0.8;
+		}
+
+		return super.getFinalPrice();
+	}
+}
+
+class Order {
+	private Product[] products;
+
+	public Order(Product[] products) {
+		this.products = products;
+	}
+
+	public double calculateTotal() {
+		double total = 0;
+
+		for (int i = 0; i < products.length; i++) {
+			total += products[i].getFinalPrice();
+		}
+
+		return total;
+	}
+
+	public void printOrder() {
+		for (int i = 0; i < products.length; i++) {
+			Product p = products[i];
+
+			String type;
+
+			if (p instanceof Electronics) {
+				type = "Electronics";
+			} else {
+				type = "Food";
+			}
+
+			System.out.println(p.getName() + " - " + type + " - " + p.getFinalPrice());
+		}
+
+		System.out.println("Total = " + calculateTotal());
+	}
+}
+
+public class Main {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+
+		int n = sc.nextInt();
+		sc.nextLine();
+
+		Product[] products = new Product[n];
+
+		for (int i = 0; i < n; i++) {
+			String line = sc.nextLine();
+
+			String[] parts = line.split(" ");
+
+			String type = parts[0];
+			String name = parts[1].replace("\"", "");
+			double price = Double.parseDouble(parts[2]);
+
+			if (type.equals("E")) {
+				double warrantyFee = Double.parseDouble(parts[3]);
+
+				products[i] = new Electronics("", name, price, warrantyFee);
+
+			} else if (type.equals("F")) {
+				LocalDate expiryDate = LocalDate.parse(parts[3]);
+
+				products[i] = new Food("", name, price, expiryDate);
+			}
+		}
+
+		Order order = new Order(products);
+
+		order.printOrder();
+
+		sc.close();
+	}
+}
