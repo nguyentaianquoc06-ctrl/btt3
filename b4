@@ -1,0 +1,33 @@
+package castingtrap;
+
+class Animal {
+	public void makeSound() {
+		System.out.println("Animal sound");
+	}
+}
+
+class Dog extends Animal {
+	@Override
+	public void makeSound() {
+		System.out.println("Wolf wolf");
+	}
+}
+
+class Cat extends Animal {
+	@Override
+	public void makeSound() {
+		System.out.println("Meo meo");
+	}
+}
+
+public class Main {
+	public static void main(String[] args) {
+		Animal a = new Dog();
+		if (a instanceof Cat) {
+			Cat c = (Cat) a;
+			c.makeSound();
+		} else {
+			System.out.println("Đây không phải là Mèo!");
+		}
+	}
+}
