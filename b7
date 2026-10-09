@@ -1,0 +1,56 @@
+package room;
+
+import java.util.Scanner;
+
+abstract class Room {
+	int nights;
+
+	public Room(int nights) {
+		this.nights = nights;
+	}
+
+	abstract public long Price();
+}
+
+class Standard extends Room {
+	public Standard(int nights) {
+		super(nights);
+	}
+
+	@Override
+	public long Price() {
+		long total = 500000L * nights;
+
+		if (nights > 3) {
+			total = total * 95 / 100;
+		}
+
+		return total;
+	}
+}
+
+class VIP extends Room {
+	public VIP(int nights) {
+		super(nights);
+	}
+	@Override
+	public long Price() {
+		return 2000000L * nights;
+	}
+}
+public class Main {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		String type = sc.next();
+		int nights = sc.nextInt();
+		Room n;
+		if (type.equals("S")) {
+			n = new Standard(nights);
+		} else {
+			n = new VIP(nights);
+		}
+		System.out.println(n.Price());
+		sc.close();
+	}
+
+}
